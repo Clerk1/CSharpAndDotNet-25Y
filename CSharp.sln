@@ -53,6 +53,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lektion03Opgave02", "Lektio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lektion03Opgave03", "Lektion03\Lektion03Opgave03\Lektion03Opgave03.csproj", "{E2EDA83B-A6E0-4E40-8F63-432F7B95BA64}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lektion04", "Lektion04", "{60E52213-3377-4595-861A-CA1134222532}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Slides", "Slides", "{9E79AEF0-02F8-4C80-951C-E9D600F82E0F}"
+	ProjectSection(SolutionItems) = preProject
+		Lektion04\Slides\controllerBasedWebApi.md = Lektion04\Slides\controllerBasedWebApi.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +76,7 @@ Global
 		{C0C636E5-F857-490A-A736-8783E1B4886C} = {C41A957E-057E-405E-A495-83706CD7D7CA}
 		{6ECF3180-6F34-44FE-9722-7544859784D6} = {C41A957E-057E-405E-A495-83706CD7D7CA}
 		{E2EDA83B-A6E0-4E40-8F63-432F7B95BA64} = {C41A957E-057E-405E-A495-83706CD7D7CA}
+		{9E79AEF0-02F8-4C80-951C-E9D600F82E0F} = {60E52213-3377-4595-861A-CA1134222532}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C528E78C-5938-42B6-BD1F-436A446246B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

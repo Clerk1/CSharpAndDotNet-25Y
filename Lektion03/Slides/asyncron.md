@@ -87,6 +87,7 @@ Hvis I kommer fra **JavaScript / TypeScript**, vil asynkron programmering føles
 | **Syntaks for ventetid** | `async` / `await` | `async` / `await` |
 
 ---
+
 | Koncept | JavaScript / TypeScript | C# / .NET |
 | :--- | :--- | :--- |
 | **Kombiner alle promises/tasks** | `Promise.all([p1, p2])` | `Task.WhenAll(t1, t2)` |
@@ -103,6 +104,8 @@ For at gøre en metode asynkron benyttes to nøgleord:
 
 1. **`async` modifier**: Markerer at metoden indeholder asynkron logik og tillader brug af `await`.
 2. **`await` operator**: Pauser metodens udførelse (uden at blokere tråden), indtil den afventede `Task` er færdig.
+
+---
 
 ```csharp
 using System.Net.Http;
@@ -312,6 +315,8 @@ Asynkrone operationer kan tage lang tid eller blive overflødige (f.eks. ved bru
 - **`CancellationTokenSource` (CTS)**: Styringsenheden som udsteder afbrydelsessignalet (`cts.Cancel()`).
 - **`CancellationToken` (CT)**: Token som sendes med ned i asynkrone metoder.
 
+---
+
 ```csharp
 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3)); // Timeout efter 3 sek.
 
@@ -439,6 +444,11 @@ public class WeatherService
     {
         string url = $"https://api.weather.com/v1/{city}";
 
+```
+
+---
+
+```csharp
         try
         {
             Console.WriteLine($"[INFO] Henter vejrdata for {city}...");
@@ -450,6 +460,12 @@ public class WeatherService
             string json = await response.Content.ReadAsStringAsync(cancellationToken);
             Console.WriteLine($"[SUCCESS] Data modtaget: {json.Substring(0, Math.Min(30, json.Length))}...");
         }
+
+```
+
+---
+
+```csharp
         catch (OperationCanceledException)
         {
             Console.WriteLine($"[CANCELLED] Anmodning for {city} blev afbrudt.");
@@ -502,4 +518,3 @@ public class Program
 ---
 
 # Spørgsmål & Diskussion 🚀
-### Tak for jeres opmærksomhed!

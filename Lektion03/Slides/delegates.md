@@ -20,11 +20,8 @@ footer: 'C# & .NET'
 5. **Sammenligningstabel: Java vs. C#**
 6. **Lambda-udtryk & Method Groups**
 7. **Multicast Delegates (`+=` og `-=`)**
-8. **Hvad sker der under motorhjelmen? (`System.MulticastDelegate`)**
-9. **Fra Delegate til `event`**
-10. **Praktiske Eksempler (Callbacks & LINQ)**
-11. **Best Practices (Do's & Don'ts)**
-12. **Opsummering**
+8. **Praktiske Eksempler (Callbacks & LINQ)**
+9. **Opsummering**
 
 ---
 
@@ -73,7 +70,12 @@ class Program
     {
         Console.WriteLine($"[LOG]: {text}");
     }
+    
+```
+---
 
+```csharp
+        
     static void Main()
     {
         // 3. Tildel metoden til delegate-variablen
@@ -103,7 +105,11 @@ public class Main {
     static void writeToConsole(String text) {
         System.out.println("[LOG]: " + text);
     }
+```
 
+---
+
+```java
     public static void main(String[] args) {
         LogHandler logger = Main::writeToConsole;
         logger.log("Hej fra Java!"); // Kræver eksplicit metodekald .log()
@@ -125,6 +131,10 @@ Ligesom Java har `java.util.function`-pakken (`Function`, `Consumer`, etc.), har
 - `Action<T>` (1 parameter af type `T`, returnerer `void`)
 - `Action<T1, T2>` (2 parametre, returnerer `void`)
 
+---
+
+## Indbyggede Delegates (fortsat): `Func<...>`
+
 ### 2. `Func<..., TResult>` (Svarer til Java `Function<T, R>` / `Supplier<T>`)
 - Bruges til metoder, der **returnerer en værdi**.
 - **Sidste typeparameter** er altid **returtypen**!
@@ -139,6 +149,8 @@ Ligesom Java har `java.util.function`-pakken (`Function`, `Consumer`, etc.), har
 ### 3. `Predicate<T>` (Svarer til Java `Predicate<T>`)
 - Bruges til metoder, der tager 1 parameter `T` og returnerer en `bool`.
 - Er i praksis en alias/synonym for `Func<T, bool>`.
+
+---
 
 ### Eksempel i C#:
 ```csharp
@@ -167,6 +179,13 @@ bool check = isEven(4); // true
 | **Metode uden returværdi (`void`)** | `Consumer<T>`, `BiConsumer<T1,T2>`, `Runnable` | `Action<T>`, `Action<T1,T2>`, `Action` |
 | **Metode med returværdi** | `Function<T, R>`, `BiFunction<T1,T2, R>` | `Func<T, R>`, `Func<T1, T2, R>` |
 | **Værdi-leverandør (0 parametre)** | `Supplier<T>` | `Func<T>` |
+
+---
+
+## 5. Sammenligningstabel: Java vs. C# fortsat
+
+| Koncept | Java | C# |
+| :--- | :--- | :--- |
 | **Betingelse (returnerer boolean)** | `Predicate<T>` | `Predicate<T>` (eller `Func<T, bool>`) |
 | **Metodeafvikling / Kald** | `fn.apply(x)` / `consumer.accept(x)` | `fn(x)` (eller `fn.Invoke(x)`) |
 | **Metodereferencer** | `Class::staticMethod`, `obj::instanceMethod` | `Class.StaticMethod`, `obj.InstanceMethod` |
@@ -183,6 +202,8 @@ Både Java og C# understøtter lambda-udtryk og metodereferencer.
 #### Lambda-udtryk:
 - **Java**: `(x, y) -> x + y`
 - **C#**: `(x, y) => x + y` *(bruger `=>` i stedet for `->`)*
+
+---
 
 #### Metodereference vs. Method Group:
 - **Java** bruger `::` operator:
@@ -218,6 +239,12 @@ Func<int, int> op1 = Calculator.Double;
 // Metodereference til instansmetode (binder både metoden OG 'calc' instansen)
 Predicate<int> op2 = calc.IsPositive;
 
+```
+
+---
+
+```csharp
+
 int res1 = op1(5);       // 10
 bool res2 = op2(10);     // true
 ```
@@ -242,6 +269,7 @@ logger("Bruger logget ind");
 // Fjern en metode igen med -=
 logger -= LogToDatabase;
 ```
+---
 
 ### Hvordan håndteres returværdier i Multicast Delegates?
 - Hvis delegaten returnerer en værdi (f.eks. `Func<int>`), vil et multicast-kald eksekvere alle metoder, men kun returnere resultatet fra **den SIDSTE metode** i listen.
@@ -249,71 +277,7 @@ logger -= LogToDatabase;
 
 ---
 
-## 8. Hvad sker der under motorhjelmen?
-
-Når du erklærer en `delegate` i C#, genererer C#-kompilatoren i virkeligheden en klasse:
-
-```
-System.Object
-  └── System.Delegate
-        └── System.MulticastDelegate
-              └── LogHandler (Din custom delegate)
-```
-
-### Hvad indeholder `MulticastDelegate`?
-1. `Target`: Referencen til objektet (`this`), hvis det er en instansmetode (ellers `null`).
-2. `Method`: `MethodInfo` om metoden, der skal kaldes.
-3. `_invocationList`: Et array/liste af andre delegates (hvis der er tilføjet flere via `+=`).
-
-Når du kalder `logger("msg")`, oversætter kompilatoren det til `logger.Invoke("msg")`, som gennemløber `_invocationList`.
-
----
-
-## 9. Fra Delegate til `event`
-
-I Java bruger man ofte Listener/Observer-mønsteret (f.eks. `button.addActionListener(listener)`).
-I C# bruges **`event`**, som indkapsler og beskytter en multicast delegate!
-
-### Hvorfor har vi `event` når vi har `delegate`?
-En offentlig `delegate` variabel lader eksterne klasser:
-- Overskrive hele lytte-listen ved et uheld: `myDelegate = null;` eller `myDelegate = myMethod;` (sletter eksisterende lyttere!)
-- Udløse kaldet udefra: `myDelegate();`
-
-Nøgleordet **`event`** beskytter delegaten:
-- Eksterne klasser kan **KUN** til- og afmelde sig via `+=` og `-=`.
-- Kun den klasse, der ejer eventet, kan udløse det (Invoke)!
-
----
-
-## Kode-eksempel: `delegate` vs `event`
-
-```csharp
-public class Button
-{
-    // Ubeskyttet delegate: Eksterne objekter kan lave 'OnClickUnsafe = null' eller kalde OnClickUnsafe()
-    public Action? OnClickUnsafe;
-
-    // Beskyttet event: Eksterne objekter kan KUN tilmelde/afmelde sig via += og -=
-    public event Action? OnClick;
-
-    public void Press()
-    {
-        // Udløses sikkert indefra klassen selv
-        OnClick?.Invoke();
-    }
-}
-
-// Anvendelse fra en anden klasse:
-Button btn = new();
-btn.OnClick += () => Console.WriteLine("Knap klikket!");
-
-// btn.OnClick();      // ❌ KOMPILERINGSFEJL! Kan ikke udløses udefra.
-// btn.OnClick = null; // ❌ KOMPILERINGSFEJL! Kan ikke overskrives udefra.
-```
-
----
-
-## 10. Praktiske Eksempler (LINQ & Callbacks)
+## 8. Praktiske Eksempler (LINQ & Callbacks)
 
 ### Delegates er motoren i C# LINQ
 Præcis ligesom Java Streams bruger `Function` og `Predicate`, bruger C# LINQ `Func<T, TResult>` og `Func<T, bool>`:
@@ -332,25 +296,9 @@ foreach (var val in result)
     Console.WriteLine(val); // 20, 40, 60
 }
 ```
-
 ---
 
-## 11. Best Practices (Do's & Don'ts)
-
-### ✅ Do's
-- **Brug `Func<...>` og `Action<...>`** som standard i stedet for at oprette nye custom `delegate`-typer.
-- **Brug `event`** frem for ubeskyttede `delegate`-variabler i public API'er til event-håndtering.
-- **Brug null-conditional operator (`?.`)** når du kalder delegates: `myDelegate?.Invoke(arg);`.
-- **Brug Method Group Conversion** (`Console.WriteLine`) frem for udtalte lambdas (`x => Console.WriteLine(x)`), når det gør koden renere.
-
-### ❌ Don'ts
-- **Undgå at lave custom delegates**, medmindre du har brug for specifikke parameternavne i domænespecifikke API'er.
-- **Undgå tunge eller blokerende operationer** i multicast delegates, da de eksekveres synkront én efter én.
-- **Husk afmelding (`-=`)** af events fra langlivede objekter for at undgå memory leaks!
-
----
-
-## 12. Opsummering
+## 9. Opsummering
 
 - **C# Delegates** er typesikre reference-typer til metoder (førsteklasses funktioner).
 - **Java vs C# mapping**:
@@ -360,4 +308,3 @@ foreach (var val in result)
   - `Predicate<T>` $\rightarrow$ `Predicate<T>` / `Func<T, bool>`
 - **Method Groups**: `obj.Method` i C# svarer til `obj::Method` i Java.
 - **Multicast**: En C# delegate kan indeholde en hel kæde af metoder med `+=` og `-=`.
-- **Events**: En `event` indkapsler og beskytter en multicast delegate, så eksterne objekter kun kan tilføje/fjerne lyttere.

@@ -80,7 +80,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+```
 
+---
+
+```csharp
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -124,7 +128,7 @@ public class ProductsController : ControllerBase
 
 Dekorering med `[ApiController]` aktiverer en række magiske konventioner:
 
-1. **Automatisk Model Validation**: Hvis indkommende data mislykkes validering, returneres automatisk `400 Bad Request` før metoden overhovedet rammes.
+1. **Automatisk Model Validation**: Hvis indkommende data validering mislykkes, returneres automatisk `400 Bad Request` før metoden overhovedet rammes.
 2. **Automatisk Binding Source Inferencing**:
    - `[FromBody]` antages for komplekse typer.
    - `[FromRoute]` antages for parametre der matcher route-skabelonen.
@@ -183,12 +187,6 @@ ASP.NET Core leverer specifikke attributter til hver HTTP-metode:
 | **PUT** | `[HttpPut]` | Erstatte en eksisterende ressource (Idempotent) |
 | **PATCH** | `[HttpPatch]` | Delvis opdatering af en ressource |
 | **DELETE** | `[HttpDelete]` | Slette en ressource (Idempotent) |
-
-### Kombineret Sti
-```csharp
-[HttpPost("create")] // Sti: api/products/create
-[HttpGet("search/{query}")] // Sti: api/products/search/laptop
-```
 
 ---
 
@@ -279,7 +277,7 @@ public async Task<ActionResult<ProductDto>> GetById(int id)
 ```
 
 ### Hvorfor `ActionResult<T>`?
-- Fuld typesikkerhed for Swagger documentation.
+- Fuld typesikkerhed for OpenApi documentation.
 - Mulighed for at returnere forskellige HTTP statuskoder (`200`, `400`, `404`, `500`).
 
 ---
@@ -574,7 +572,7 @@ public class ProductsController : ControllerBase
 
 ## 14. Best Practices for Controller Web APIs
 
-1. **Keep Controllers Thin (Mave-fine Controllers)**:
+1. **Keep Controllers Thin**:
    - Controllerens eneste ansvar er HTTP (routing, request parsing, statuskoder).
    - Forretningslogik hører til i Services/MediatR/Domain lag.
 2. **Brug `ActionResult<T>`**:

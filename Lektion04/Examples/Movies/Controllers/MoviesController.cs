@@ -29,7 +29,7 @@ namespace Movies.Controllers
 
         // POST api/<MoviesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] String value)
         {
         }
 

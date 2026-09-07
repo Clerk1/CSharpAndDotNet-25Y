@@ -7,7 +7,8 @@ footer: 'C# & .NET | Lektion 04'
 ---
 
 # Controller-based Web API i .NET
-### Byg skalerbare, strukturerede og typesikre RESTful Web APIs med ASP.NET Core Controllers
+
+## Byg skalerbare, strukturerede og typesikre RESTful Web APIs med ASP.NET Core Controllers
 
 ---
 
@@ -28,10 +29,8 @@ footer: 'C# & .NET | Lektion 04'
 8. **Model Validation & Data Annotations**
 9. **Dependency Injection (DI) i Controllers**
 10. **Data Transfer Objects (DTOs) & Separering af Lag**
-11. **Fejlhåndtering & `ProblemDetails` (RFC 7807)**
-12. **Dokumentation med OpenAPI / Scalar**
-13. **Samlet Praktisk Eksempel (Full CRUD Controller)**
-14. **Best Practices & Opsummering**
+11. **Samlet Praktisk Eksempel (Full CRUD Controller)**
+12. **Best Practices & Opsummering**
 
 ---
 
@@ -420,41 +419,6 @@ public record ProductDto(int Id, string Name, decimal Price, string Description,
 
 ---
 
-## 11. Fejlhåndtering & `ProblemDetails`
-
-Brug standardiserede fejlsvar i dit API i overensstemmelse med **RFC 7807 (Problem Details)**.
-
-### Konfiguration af Global Exception Handling (.NET 8+)
-I stedet for `try-catch` i hver eneste controller action, brug global middleware:
-
-```csharp
-// Program.cs
-builder.Services.AddProblemDetails();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-var app = builder.Build();
-app.UseExceptionHandler();
-```
-
----
-
-## Eksempel på `ProblemDetails` Svar
-
-Når en uforset fejl eller kontrolleret valideringsfejl opstår, modtager klienten et strømlinet og struktureret JSON-fejlsvar:
-
-```json
-{
-  "type": "https://httpstatuses.com/500",
-  "title": "Der opstod en uventet serverfejl",
-  "status": 500,
-  "detail": "Databaseforbindelsen mistede forbindelsen.",
-  "instance": "/api/products/42",
-  "traceId": "00-4bf92f3577b34da6a3ce929d0e0e4736-00"
-}
-```
-
----
-
 ## 12. Dokumentation med OpenAPI / Scalar
 
 OpenAPI genererer interaktiv API-dokumentation og test-UI (som **Scalar**) automatisk.
@@ -477,7 +441,7 @@ public async Task<ActionResult<ProductDto>> GetById(int id)
 
 ---
 
-## 13. Samlet Praktisk Eksempel: Full CRUD Controller
+## 11. Samlet Praktisk Eksempel: Full CRUD Controller
 
 Lad os samle alt i en komplet, ren og velstruktureret `ProductsController`:
 
@@ -570,7 +534,7 @@ public class ProductsController : ControllerBase
 
 ---
 
-## 14. Best Practices for Controller Web APIs
+## 12. Best Practices for Controller Web APIs
 
 1. **Keep Controllers Thin**:
    - Controllerens eneste ansvar er HTTP (routing, request parsing, statuskoder).
